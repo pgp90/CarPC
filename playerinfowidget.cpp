@@ -12,13 +12,20 @@ PlayerInfoWidget::PlayerInfoWidget(QWidget *parent, QMediaPlayer *player, QMedia
 {
     ui->setupUi(this);
 
-    ui->nextButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
-    ui->prevButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
+
 
     if (m_player == NULL || m_playlist == NULL) {
         m_playerSet = false;
     } else {
         m_playerSet = true;
+    }
+
+    ui->nextButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
+    ui->prevButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
+    if (m_playerSet && m_player->state() == QMediaPlayer::PlayingState) {
+        ui->playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+    } else {
+        ui->playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
     }
 
     ui->mediaButton->setEnabled(m_playerSet);
@@ -42,13 +49,25 @@ void PlayerInfoWidget::setPlayerAndPlaylist(QMediaPlayer *player, QMediaPlaylist
     }
     m_player = player;
     m_playlist = playlist;
-    m_playerSet = true;
+    if (m_player == NULL || m_playlist == NULL) {
+        m_playerSet = false;
+    } else {
+        m_playerSet = true;
+    }
+    if (m_playerSet && m_player->state() == QMediaPlayer::PlayingState) {
+        ui->playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+    } else {
+        ui->playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+    }
+
     ui->mediaButton->setEnabled(m_playerSet);
     ui->playButton->setEnabled(m_playerSet);
     ui->nextButton->setEnabled(m_playerSet);
     ui->prevButton->setEnabled(m_playerSet);
     ui->playbackSlider->setEnabled(m_playerSet);
-    makeInternalConnections();
+    if (m_playerSet) {
+        makeInternalConnections();
+    }
 }
 
 void PlayerInfoWidget::makeInternalConnections() {

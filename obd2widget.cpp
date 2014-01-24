@@ -21,20 +21,21 @@ OBD2Widget::OBD2Widget(QWidget *parent, QString portName, int baudrate) :
 
     m_obdPages << OBD_PAGE_t();
 
-    pidInfo[PID_ENGINE_LOAD] =                  PID_INFO_t(1, "0104", "Engine Load",                    "%1 \%");
-    pidInfo[PID_COLLANT_TEMP] =                 PID_INFO_t(1, "0105", "Coolant Temp",                   "%1 ºF");
-    pidInfo[PID_SHORT_TERM_FUEL_TRIM] =         PID_INFO_t(1, "0106", "Short-Term Fuel Trim",           "%1 \%");
-    pidInfo[PID_LONG_TERM_FUEL_TRIM] =          PID_INFO_t(1, "0107", "Long-Term Fuel Trim",            "%1 \%");
-    pidInfo[PID_FUEL_PRESURE] =                 PID_INFO_t(1, "010A", "Fuel Pressure",                  "%1 kPa");
-    pidInfo[PID_ENGINE_RPM] =                   PID_INFO_t(1, "010C", "Engine RPM",                     "%1 RPM");
-    pidInfo[PID_VEHICLE_SPEED] =                PID_INFO_t(1, "010D", "Vehicle Speed",                  "%1 km/h");
-    pidInfo[PID_TIMING_ADVANCE] =               PID_INFO_t(1, "010E", "Timing Adv.",                    "%1 º");
-    pidInfo[PID_INTAKE_AIR_TEMP] =              PID_INFO_t(1, "010F", "Intake Air Temp",                "%1 ºC");
-    pidInfo[PID_MAF_AIRFLOW_RATE] =             PID_INFO_t(1, "0110", "MAF",                            "%1 g/s");
-    pidInfo[PID_THROTTLE_POSITION] =            PID_INFO_t(1, "0111", "Throttle Position",              "%1 \%");
-    pidInfo[PID_RELATIVE_THROTTLE_POSITION] =   PID_INFO_t(1, "0145", "Relative Throttle Position",     "%1 \%");
-    pidInfo[PID_AMBIENT_AIR_TEMP] =             PID_INFO_t(1, "0146", "Ambient Ait Temp",               "%1 ºC");
-    pidInfo[PID_ENGINE_FUEL_RATE] =             PID_INFO_t(1, "015E", "Engine Fuel Rate",               "%1 L/h");
+    pidInfo[PID_ENGINE_LOAD] =                  PID_INFO_t("0104", "Engine Load",                       "\%"    );
+    pidInfo[PID_COLLANT_TEMP] =                 PID_INFO_t("0105", "Coolant Temp",                      "ºC",   9.0*5.0+32.0  , "ºF");
+    pidInfo[PID_SHORT_TERM_FUEL_TRIM] =         PID_INFO_t("0106", "Short-Term Fuel Trim bank 1",       "\%"    );
+    pidInfo[PID_LONG_TERM_FUEL_TRIM] =          PID_INFO_t("0107", "Long-Term Fuel Trim bank 1",        "\%"    );
+    pidInfo[PID_FUEL_PRESURE] =                 PID_INFO_t("010A", "Fuel Pressure",                     "kPa"   );
+    pidInfo[PID_ENGINE_RPM] =                   PID_INFO_t("010C", "Engine RPM",                        "RPM"   );
+    pidInfo[PID_VEHICLE_SPEED] =                PID_INFO_t("010D", "Vehicle Speed",                     "km/h", 0.621371      , "mph");
+    pidInfo[PID_TIMING_ADVANCE] =               PID_INFO_t("010E", "Timing Adv.",                       "º"     );
+    pidInfo[PID_INTAKE_AIR_TEMP] =              PID_INFO_t("010F", "Intake Air Temp",                   "ºC",   9.0*5.0+32.0  , "ºF");
+    pidInfo[PID_MAF_AIRFLOW_RATE] =             PID_INFO_t("0110", "MAF",                               "g/s"   );
+    pidInfo[PID_THROTTLE_POSITION] =            PID_INFO_t("0111", "Throttle Position",                 "\%"    );
+    pidInfo[PID_RELATIVE_THROTTLE_POSITION] =   PID_INFO_t("0145", "Relative Throttle Position",        "\%"    );
+    pidInfo[PID_AMBIENT_AIR_TEMP] =             PID_INFO_t("0146", "Ambient Air Temp",                  "ºC",   9.0*5.0+32.0  , "ºF");
+    pidInfo[PID_ENGINE_FUEL_RATE] =             PID_INFO_t("015E", "Engine Fuel Rate",                  "L/h"   );
+    pidInfo[PID_EXHAUST_GAS_TEMP_11] =          PID_INFO_t("0178", "Exhaust Gas temp bank 1, sen 1",    "ºC",   9.0*5.0+32.0  , "ºF");
 
     for ( int i=0; i < 0xE0; i++) {
         pidSupported[i] = false;
@@ -70,25 +71,25 @@ void OBD2Widget::connectSerialPort(QString portName, int baudrate) {
     if (!obdSerial->open(QIODevice::ReadWrite)) {
         qDebug() << QObject::tr("Failed to open port %1, error: %2").arg(portName).arg(obdSerial->errorString()) << endl;
         isSerialGood = false;
-    }
-    if (!obdSerial->setBaudRate(baudrate)) {
+    } else if (!obdSerial->setBaudRate(baudrate)) {
         qDebug() << QObject::tr("Failed to set %1 baud for port %2, error: %3").arg(baudrate).arg(portName).arg(obdSerial->errorString()) << endl;
+        obdSerial->close();
         isSerialGood = false;
-    }
-    if (!obdSerial->setDataBits(QSerialPort::Data8)) {
+    } else if (!obdSerial->setDataBits(QSerialPort::Data8)) {
         qDebug() << QObject::tr("Failed to set 8 data bits for port %1, error: %2").arg(portName).arg(obdSerial->errorString()) << endl;
+        obdSerial->close();
         isSerialGood = false;
-    }
-    if (!obdSerial->setParity(QSerialPort::NoParity)) {
+    } else if (!obdSerial->setParity(QSerialPort::NoParity)) {
         qDebug() << QObject::tr("Failed to set no parity for port %1, error: %2").arg(portName).arg(obdSerial->errorString()) << endl;
+        obdSerial->close();
         isSerialGood = false;
-    }
-    if (!obdSerial->setStopBits(QSerialPort::OneStop)) {
+    } else if (!obdSerial->setStopBits(QSerialPort::OneStop)) {
         qDebug() << QObject::tr("Failed to set 1 stop bit for port %1, error: %2").arg(portName).arg(obdSerial->errorString()) << endl;
+        obdSerial->close();
         isSerialGood = false;
-    }
-    if (!obdSerial->setFlowControl(QSerialPort::NoFlowControl)) {
+    } else if (!obdSerial->setFlowControl(QSerialPort::NoFlowControl)) {
         qDebug() << QObject::tr("Failed to set no flow control for port %1, error: %2").arg(portName).arg(obdSerial->errorString()) << endl;
+        obdSerial->close();
         isSerialGood = false;
     }
 }
@@ -159,22 +160,22 @@ void OBD2Widget::updateObdValues() {
 
 void OBD2Widget::setLabels() {
     OBD_PAGE_t pageInfo = m_obdPages[pageNum];
-    setDataLabel(ui->itemLabel0, pageInfo.block1);
-    setDataLabel(ui->itemLabel1, pageInfo.block2);
-    setDataLabel(ui->itemLabel2, pageInfo.block3);
-    setDataLabel(ui->itemLabel3, pageInfo.block4);
-    setDataLabel(ui->itemLabel4, pageInfo.block5);
-    setDataLabel(ui->itemLabel5, pageInfo.block6);
+    setDataLabel(ui->itemLabel0, pageInfo.block0);
+    setDataLabel(ui->itemLabel1, pageInfo.block1);
+    setDataLabel(ui->itemLabel2, pageInfo.block2);
+    setDataLabel(ui->itemLabel3, pageInfo.block3);
+    setDataLabel(ui->itemLabel4, pageInfo.block4);
+    setDataLabel(ui->itemLabel5, pageInfo.block5);
 }
 
 void OBD2Widget::setValues() {
     OBD_PAGE_t pageInfo = m_obdPages[pageNum];
-    setValueLabel(ui->itemValue0, pageInfo.block1);
-    setValueLabel(ui->itemValue1, pageInfo.block2);
-    setValueLabel(ui->itemValue2, pageInfo.block3);
-    setValueLabel(ui->itemValue3, pageInfo.block4);
-    setValueLabel(ui->itemValue4, pageInfo.block5);
-    setValueLabel(ui->itemValue5, pageInfo.block6);
+    setValueLabel(ui->itemValue0, pageInfo.block0);
+    setValueLabel(ui->itemValue1, pageInfo.block1);
+    setValueLabel(ui->itemValue2, pageInfo.block2);
+    setValueLabel(ui->itemValue3, pageInfo.block3);
+    setValueLabel(ui->itemValue4, pageInfo.block4);
+    setValueLabel(ui->itemValue5, pageInfo.block5);
 }
 
 
@@ -230,13 +231,15 @@ QString OBD2Widget::obdRequest(QString req) {
 
 QString OBD2Widget::parseResult(QString str, int pid) {
     //    qDebug() << "OBD::parseValue(\"" << str << "\", OBD2_PID)";
-    QString format = ((PID_INFO_t)pidInfo[pid]).valueStr;
+    QString value;
+    PID_INFO_t info = pidInfo[pid];
+    QString unit = info.unit;
 
     if (str.compare("") == 0) {
-        format = format.arg("-");
+        value = "-";
     } else {
-        QString s;
         int A, B, C, D;
+//        float v;
 
         parseResultStr(str, &A, &B, &C, &D);
 
@@ -244,57 +247,73 @@ QString OBD2Widget::parseResult(QString str, int pid) {
         case PID_AMBIENT_AIR_TEMP:
         case PID_INTAKE_AIR_TEMP:
         case PID_COLLANT_TEMP:
-            s = s.number(A-40);
+//            v = A-40;
+//            if (info.hasConversion && m_useConversion)
+            value = value.number(A-40);
             break;
         case PID_ENGINE_RPM:
-            s = s.number((float)((A*256)+B)/4.0);
+            value = value.number((float)((A*256)+B)/4.0);
             break;
         case PID_LONG_TERM_FUEL_TRIM:
         case PID_SHORT_TERM_FUEL_TRIM:
-            s = s.number((float)((A-128)*100)/128.0);
+            value = value.number((float)((A-128)*100)/128.0);
             break;
         case PID_MAF_AIRFLOW_RATE:
-            s = s.number((float)((A*256)+B)/100.0);
+            value = value.number((float)((A*256)+B)/100.0);
             break;
         case PID_TIMING_ADVANCE:
-            s = s.number((float)A/2.0-64.0);
+            value = value.number((float)A/2.0-64.0);
             break;
         case PID_ENGINE_LOAD:
-            s = s.number((float)(A*100)/255.0);
+            value = value.number((float)(A*100)/255.0);
             break;
         case PID_FUEL_PRESURE:
-            s = s.number(A*3);
+            value = value.number(A*3);
             break;
         case PID_VEHICLE_SPEED:
-            s = s.number(A);
+            value = value.number(A);
             break;
         case PID_THROTTLE_POSITION:
         case PID_RELATIVE_THROTTLE_POSITION:
-            s = s.number((float)(A*100)/255.0);
+            value = value.number((float)(A*100)/255.0);
             break;
         case PID_ENGINE_FUEL_RATE:
-            s = s.number((float)(A*100)*0.05);
+            value = value.number((float)(A*100)*0.05);
             break;
         default:
             break;
+        case PID_EXHAUST_GAS_TEMP_11:
+            int E, F, G, H, I;
+            parseResultStr(str, &A, &B, &C, &D, &E, &F, &G, &H, &I);
+            EGT_DATA egt_data = EGT_DATA(A, B, C, D, E, F, G, H, I);
+            if (egt_data.sensor1Supported) {
+                value = value.number(egt_data.sensor1Temp);
+            } else {
+                value = "-";
+            }
+            break;
         }
-        format = format.arg(s);
     }
-    return format;
+
+    return value.append(" ").append(unit);
 }
 
-void OBD2Widget::parseResultStr(QString str, int* a, int* b, int* c, int* d) {
-    bool ok;
+QString OBD2Widget::preParseResultString(QString str){
     str.replace(" ", "");
 //    qDebug() << "str: " << str;
     QString str2 = str.mid(4);
 //    qDebug() << "str2: " << str2;
+    return str2;
+}
+
+void OBD2Widget::parseResultStr(QString str, int* a, int* b, int* c, int* d) {
+    bool ok;
+    QString str2 = preParseResultString(str);
     *a = str2.mid(0, 2).toInt(&ok, 16);
     *b = str2.mid(2, 2).toInt(&ok, 16);
     *c = str2.mid(4, 2).toInt(&ok, 16);
     *d = str2.mid(6, 2).toInt(&ok, 16);
 }
-
 
 QBitArray OBD2Widget::decodePIDSupport(QString str) {
     str.replace(" ", "");
@@ -353,4 +372,59 @@ void OBD2Widget::loadSupportedPids() {
             }
         }
     }
+}
+
+//for uncommon pids...
+void OBD2Widget::parseResultStr(QString str, int* a, int* b, int* c, int* d, int* e) {
+    bool ok;
+    QString str2 = preParseResultString(str);
+    *a = str2.mid(0, 2).toInt(&ok, 16);
+    *b = str2.mid(2, 2).toInt(&ok, 16);
+    *c = str2.mid(4, 2).toInt(&ok, 16);
+    *d = str2.mid(6, 2).toInt(&ok, 16);
+    *e = str2.mid(8, 2).toInt(&ok, 16);
+}
+
+void OBD2Widget::parseResultStr(QString str, int* a, int* b, int* c, int* d, int* e, int* f, int* g) {
+    bool ok;
+    QString str2 = preParseResultString(str);
+    *a = str2.mid(0, 2).toInt(&ok, 16);
+    *b = str2.mid(2, 2).toInt(&ok, 16);
+    *c = str2.mid(4, 2).toInt(&ok, 16);
+    *d = str2.mid(6, 2).toInt(&ok, 16);
+    *e = str2.mid(8, 2).toInt(&ok, 16);
+    *f = str2.mid(10, 2).toInt(&ok, 16);
+    *g = str2.mid(12, 2).toInt(&ok, 16);
+}
+
+void OBD2Widget::parseResultStr(QString str, int* a, int* b, int* c, int* d, int* e, int* f, int* g, int* h, int* i) {
+    bool ok;
+    QString str2 = preParseResultString(str);
+    *a = str2.mid(0, 2).toInt(&ok, 16);
+    *b = str2.mid(2, 2).toInt(&ok, 16);
+    *c = str2.mid(4, 2).toInt(&ok, 16);
+    *d = str2.mid(6, 2).toInt(&ok, 16);
+    *e = str2.mid(8, 2).toInt(&ok, 16);
+    *f = str2.mid(10, 2).toInt(&ok, 16);
+    *g = str2.mid(12, 2).toInt(&ok, 16);
+    *h = str2.mid(14, 2).toInt(&ok, 16);
+    *i = str2.mid(16, 2).toInt(&ok, 16);
+}
+
+void OBD2Widget::parseResultStr(QString str, int* a, int* b, int* c, int* d, int* e, int* f, int* g, int* h, int* i, int* j, int* k, int* l, int* m) {
+    bool ok;
+    QString str2 = preParseResultString(str);
+    *a = str2.mid(0, 2).toInt(&ok, 16);
+    *b = str2.mid(2, 2).toInt(&ok, 16);
+    *c = str2.mid(4, 2).toInt(&ok, 16);
+    *d = str2.mid(6, 2).toInt(&ok, 16);
+    *e = str2.mid(8, 2).toInt(&ok, 16);
+    *f = str2.mid(10, 2).toInt(&ok, 16);
+    *g = str2.mid(12, 2).toInt(&ok, 16);
+    *h = str2.mid(14, 2).toInt(&ok, 16);
+    *i = str2.mid(16, 2).toInt(&ok, 16);
+    *j = str2.mid(18, 2).toInt(&ok, 16);
+    *k = str2.mid(20, 2).toInt(&ok, 16);
+    *l = str2.mid(22, 2).toInt(&ok, 16);
+    *m = str2.mid(24, 2).toInt(&ok, 16);
 }
