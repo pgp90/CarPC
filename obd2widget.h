@@ -1,7 +1,7 @@
 #ifndef OBD2WIDGET_H
 #define OBD2WIDGET_H
 
-#include <QFrame>
+#include <QWidget>
 #include <QLabel>
 #include <QBitArray>
 #include <QByteArray>
@@ -56,7 +56,7 @@ struct PID_INFO_t {
 
 };
 
-class OBD2Widget : public QFrame
+class OBD2Widget : public QWidget
 {
     Q_OBJECT
 

@@ -31,3 +31,5 @@ FORMS    += mainwindow.ui \
     obd2widget.ui \
     playerinfowidget.ui \
     volumecontrolwidget.ui
+
+RESOURCES += stylesheet.qrc

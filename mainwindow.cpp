@@ -28,12 +28,23 @@ MainWindow::MainWindow(QWidget *parent) :
     obdPages << OBD2Widget::PID_AMBIENT_AIR_TEMP << OBD2Widget::PID_ENGINE_FUEL_RATE;
     ui->obd2Widget->setPages(obdPages);
 
+    QString mainStyleSheet = readStylesheetFile("main");
+    ui->centralWidget->setStyleSheet(mainStyleSheet);
+    qApp->setStyleSheet(mainStyleSheet);
+
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+QString MainWindow::readStylesheetFile(QString filename) {
+    QFile file(":/qss/" + filename + ".qss");
+    file.open(QFile::ReadOnly);
+    return QString::fromLatin1(file.readAll());
+}
+
 
 void MainWindow::loadPlaylist() {
     playlist->clear();

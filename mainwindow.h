@@ -25,6 +25,7 @@ private:
     QMediaPlayer *player;
     QMediaPlaylist *playlist;
 
+    QString readStylesheetFile(QString filename);
 
     void loadPlaylist();
 //    void updateMediaLocationsList();

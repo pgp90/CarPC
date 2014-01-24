@@ -6,10 +6,13 @@
 #include <QTimer>
 
 OBD2Widget::OBD2Widget(QWidget *parent, QString portName, int baudrate) :
-    QFrame(parent),
+    QWidget(parent),
     ui(new Ui::OBD2Widget)
 {
     ui->setupUi(this);
+
+    ui->nextPageButton->setIcon(style()->standardIcon(QStyle::SP_ArrowRight));
+    ui->prevPageButton->setIcon(style()->standardIcon(QStyle::SP_ArrowLeft));
 
     connect(ui->prevPageButton, SIGNAL(clicked()), this, SLOT(prevPageClicked()));
     connect(ui->nextPageButton, SIGNAL(clicked()), this, SLOT(nextPageClicked()));
