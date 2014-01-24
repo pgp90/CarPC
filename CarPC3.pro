@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT       += multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -14,10 +15,18 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    obd2widget.cpp
+    obd2widget.cpp \
+    playerinfowidget.cpp \
+    volumecontrolwidget.cpp
+#SOURCES += mainwindow2.cpp
 
 HEADERS  += mainwindow.h \
-    obd2widget.h
+    obd2widget.h \
+    playerinfowidget.h \
+    volumecontrolwidget.h
+#HEADERS  += mainwindow2.h
 
 FORMS    += mainwindow.ui \
-    obd2widget.ui
+    obd2widget.ui \
+    playerinfowidget.ui \
+    volumecontrolwidget.ui
