@@ -10,14 +10,23 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    //player and playlist setup
     player = new QMediaPlayer(this);
     playlist = new QMediaPlaylist();
     player->setPlaylist(playlist);
-
-    ui->playerInfoWidget->setPlayerAndPlaylist(player, playlist);
-
     playlist->setPlaybackMode(QMediaPlaylist::Random);
     loadPlaylist();
+    ui->playerInfoWidget->setPlayerAndPlaylist(player, playlist);
+
+    QList<int> obdPages;
+    //for testing only. should add setting based config
+//    obdPages.push_back(OBD_PAGE_t(OBD::PID_COLLANT_TEMP, OBD::PID_TIMING_ADVANCE, OBD::PID_LONG_TERM_FUEL_TRIM, OBD::PID_SHORT_TERM_FUEL_TRIM, OBD::PID_MAF_AIRFLOW_RATE, OBD::PID_ENGINE_RPM));
+//    obdPages.push_back(OBD_PAGE_t(OBD::PID_ENGINE_LOAD, OBD::PID_FUEL_PRESURE, OBD::PID_VEHICLE_SPEED, OBD::PID_INTAKE_AIR_TEMP, OBD::PID_THROTTLE_POSITION, OBD::PID_RELATIVE_THROTTLE_POSITION));
+//    obdPages.push_back(OBD_PAGE_t(OBD::PID_AMBIENT_AIR_TEMP, OBD::PID_ENGINE_FUEL_RATE));
+    obdPages << OBD2Widget::PID_COLLANT_TEMP << OBD2Widget::PID_TIMING_ADVANCE << OBD2Widget::PID_LONG_TERM_FUEL_TRIM << OBD2Widget::PID_SHORT_TERM_FUEL_TRIM << OBD2Widget::PID_MAF_AIRFLOW_RATE << OBD2Widget::PID_ENGINE_RPM;
+    obdPages << OBD2Widget::PID_ENGINE_LOAD << OBD2Widget::PID_FUEL_PRESURE << OBD2Widget::PID_VEHICLE_SPEED << OBD2Widget::PID_INTAKE_AIR_TEMP << OBD2Widget::PID_THROTTLE_POSITION << OBD2Widget::PID_RELATIVE_THROTTLE_POSITION;
+    obdPages << OBD2Widget::PID_AMBIENT_AIR_TEMP << OBD2Widget::PID_ENGINE_FUEL_RATE;
+    ui->obd2Widget->setPages(obdPages);
 
 }
 

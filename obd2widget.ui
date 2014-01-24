@@ -45,7 +45,7 @@
     <number>10</number>
    </property>
    <item alignment="Qt::AlignVCenter">
-    <widget class="QToolButton" name="toolButton_2">
+    <widget class="QToolButton" name="prevPageButton">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -425,7 +425,7 @@
     </layout>
    </item>
    <item alignment="Qt::AlignVCenter">
-    <widget class="QToolButton" name="toolButton">
+    <widget class="QToolButton" name="nextPageButton">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
