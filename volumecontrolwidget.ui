@@ -35,7 +35,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QToolButton" name="toolButton">
+      <widget class="QToolButton" name="volUpButton">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -60,7 +60,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="toolButton_2">
+      <widget class="QToolButton" name="volDownButton">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -85,7 +85,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="toolButton_3">
+      <widget class="QToolButton" name="muteButton">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -112,7 +112,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QSlider" name="horizontalSlider">
+    <widget class="QSlider" name="volSlider">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
