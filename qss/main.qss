@@ -1,6 +1,20 @@
 QMainWindow {
-	background: rgb(0, 0, 120);
+	background: rgb(0, 00, 120);
 }
+
+QToolButton {
+	background-color: rgb(190, 190, 190);
+	icon-size: 50px;
+}
+
+QToolButton:pressed {
+	background-color: rgb(40, 40, 40);
+}
+
+QLabel  {
+	color: rgb(255, 255, 255);
+}
+
 
 QSlider::handle:horizontal {
 	background: gray;
@@ -14,42 +28,26 @@ QSlider#volSlider::handle:horizontal {
 	height: 15px;
 }
 
-QGroupBox#item1GroupBox, QGroupBox#item2GroupBox, QGroupBox#item3GroupBox, QGroupBox#item4GroupBox, QGroupBox#item6GroupBox, QGroupBox#item5GroupBox {
-	background: rgb(130, 130, 130);
-	border-radius: 15px;
-}
-
-QGroupBox#obd2GroupBox {
+OBD2Widget > QGroupBox#groupBox {
 	background: rgb(0, 0, 90);
 	border-radius: 10px;
 }
 
-QToolButton {
-	background-color: rgb(190, 190, 190);
-	icon-size: 50px;
+OBD2Widget > QGroupBox#groupBox > QGroupBox {
+	background: rgb(130, 130, 130);
+	border-radius: 15px;
 }
 
-QToolButton#nextPageButton, QToolButton#prevPageButton {
+OBD2Widget > QGroupBox#groupBox > QToolButton {
 	border-radius: 9px;
 }
 
-QToolButton:pressed {
-	background-color: rgb(40, 40, 40);
-}
 
-QLabel  {
-	color: rgb(255, 255, 255);
-}
-
-QLabel#titleLabel, QLabel#albumLabel, QLabel#timeLabel, QLabel#lengthLabel  {
+QLabel#titleLabel  {
 	font-size: 16px;
 }
 
-QLabel#albumLabel{
-	font-size: 14px;
-}
-
-QLabel#timeLabel, QLabel#lengthLabel  {
+QLabel#albumLabel, QLabel#timeLabel, QLabel#lengthLabel {
 	font-size: 14px;
 }
 

@@ -33,6 +33,7 @@ private:
     void addToPlaylist2(QString filename);
     QStringList parseMediaFolder(QString filename);
 
+    void resizeEvent ( QResizeEvent * event );
 };
 
 #endif // MAINWINDOW_H

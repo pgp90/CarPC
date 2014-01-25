@@ -32,11 +32,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->centralWidget->setStyleSheet(mainStyleSheet);
     qApp->setStyleSheet(mainStyleSheet);
 
+//    connect(this->, SIGNAL())
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::resizeEvent ( QResizeEvent * event ) {
+    qDebug() << "resizeEvent()";
 }
 
 QString MainWindow::readStylesheetFile(QString filename) {

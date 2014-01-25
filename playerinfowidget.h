@@ -15,7 +15,6 @@ class PlayerInfoWidget : public QWidget
     Q_OBJECT
 
 public:
-//    explicit PlayerInfoWidget(QWidget *parent = 0);
     explicit PlayerInfoWidget(QWidget *parent = 0, QMediaPlayer *player = 0, QMediaPlaylist *playlist = 0);
     ~PlayerInfoWidget();
 

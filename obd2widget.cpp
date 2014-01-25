@@ -26,8 +26,8 @@ OBD2Widget::OBD2Widget(QWidget *parent, QString portName, int baudrate) :
 
     pidInfo[PID_ENGINE_LOAD] =                  PID_INFO_t("0104", "Engine Load",                       "\%"    );
     pidInfo[PID_COLLANT_TEMP] =                 PID_INFO_t("0105", "Coolant Temp",                      "ºC",   9.0*5.0+32.0  , "ºF");
-    pidInfo[PID_SHORT_TERM_FUEL_TRIM] =         PID_INFO_t("0106", "Short-Term Fuel Trim bank 1",       "\%"    );
-    pidInfo[PID_LONG_TERM_FUEL_TRIM] =          PID_INFO_t("0107", "Long-Term Fuel Trim bank 1",        "\%"    );
+    pidInfo[PID_SHORT_TERM_FUEL_TRIM] =         PID_INFO_t("0106", "Short-Term Fuel Trim",              "\%"    );
+    pidInfo[PID_LONG_TERM_FUEL_TRIM] =          PID_INFO_t("0107", "Long-Term Fuel Trim",               "\%"    );
     pidInfo[PID_FUEL_PRESURE] =                 PID_INFO_t("010A", "Fuel Pressure",                     "kPa"   );
     pidInfo[PID_ENGINE_RPM] =                   PID_INFO_t("010C", "Engine RPM",                        "RPM"   );
     pidInfo[PID_VEHICLE_SPEED] =                PID_INFO_t("010D", "Vehicle Speed",                     "km/h", 0.621371      , "mph");
@@ -375,6 +375,29 @@ void OBD2Widget::loadSupportedPids() {
             }
         }
     }
+}
+
+void OBD2Widget::resizeEvent ( QResizeEvent * event ) {
+    int labelHeight = ui->itemLabel0->height();
+    int valueHeight = ui->itemValue0->height();
+    QFont labelFont = ui->itemLabel0->font();
+    QFont valueFont = ui->itemValue0->font();
+
+    labelFont.setPointSize(labelHeight * 6 / 10);
+    valueFont.setPointSize(valueHeight * 7 / 10);
+
+    ui->itemLabel0->setFont(labelFont);
+    ui->itemValue0->setFont(valueFont);
+    ui->itemLabel1->setFont(labelFont);
+    ui->itemValue1->setFont(valueFont);
+    ui->itemLabel2->setFont(labelFont);
+    ui->itemValue2->setFont(valueFont);
+    ui->itemLabel3->setFont(labelFont);
+    ui->itemValue3->setFont(valueFont);
+    ui->itemLabel4->setFont(labelFont);
+    ui->itemValue4->setFont(valueFont);
+    ui->itemLabel5->setFont(labelFont);
+    ui->itemValue5->setFont(valueFont);
 }
 
 //for uncommon pids...

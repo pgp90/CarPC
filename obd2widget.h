@@ -133,6 +133,8 @@ private:
     void setDataLabel(QLabel* label, int pid);
     void setValueLabel(QLabel* label, int pid);
 
+    void resizeEvent ( QResizeEvent * event );
+
     struct EGT_DATA {
         bool sensor1Supported;
         bool sensor2Supported;
