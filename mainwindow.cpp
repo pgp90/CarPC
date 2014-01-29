@@ -20,9 +20,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QList<int> obdPages;
     //for testing only. should add setting based config
-//    obdPages.push_back(OBD_PAGE_t(OBD::PID_COLLANT_TEMP, OBD::PID_TIMING_ADVANCE, OBD::PID_LONG_TERM_FUEL_TRIM, OBD::PID_SHORT_TERM_FUEL_TRIM, OBD::PID_MAF_AIRFLOW_RATE, OBD::PID_ENGINE_RPM));
-//    obdPages.push_back(OBD_PAGE_t(OBD::PID_ENGINE_LOAD, OBD::PID_FUEL_PRESURE, OBD::PID_VEHICLE_SPEED, OBD::PID_INTAKE_AIR_TEMP, OBD::PID_THROTTLE_POSITION, OBD::PID_RELATIVE_THROTTLE_POSITION));
-//    obdPages.push_back(OBD_PAGE_t(OBD::PID_AMBIENT_AIR_TEMP, OBD::PID_ENGINE_FUEL_RATE));
     obdPages << OBD2Widget::PID_COLLANT_TEMP << OBD2Widget::PID_TIMING_ADVANCE << OBD2Widget::PID_LONG_TERM_FUEL_TRIM << OBD2Widget::PID_SHORT_TERM_FUEL_TRIM << OBD2Widget::PID_MAF_AIRFLOW_RATE << OBD2Widget::PID_ENGINE_RPM;
     obdPages << OBD2Widget::PID_ENGINE_LOAD << OBD2Widget::PID_FUEL_PRESURE << OBD2Widget::PID_VEHICLE_SPEED << OBD2Widget::PID_INTAKE_AIR_TEMP << OBD2Widget::PID_THROTTLE_POSITION << OBD2Widget::PID_RELATIVE_THROTTLE_POSITION;
     obdPages << OBD2Widget::PID_AMBIENT_AIR_TEMP << OBD2Widget::PID_ENGINE_FUEL_RATE;
@@ -54,7 +51,13 @@ QString MainWindow::readStylesheetFile(QString filename) {
 void MainWindow::loadPlaylist() {
     playlist->clear();
     QStringList list;// = getMediaLocations();
-    list << "/Users/jpalnick/Music/iTunes/iTunes Media/Music/Daft Punk";
+    QString tmpstr = QDir::homePath();
+#if defined(Q_OS_MACX)
+    tmpstr.append("/Music/iTunes/iTunes Media/Music/Daft Punk");
+#else
+    tmpstr.append("/Music");
+#endif
+    list << tmpstr;
     for (int i=0; i<list.size(); i++) {
         addToPlaylist2(list.at(i));
     }
@@ -89,7 +92,7 @@ void MainWindow::addToPlaylist(QString filename) {
 }
 
 void MainWindow::addToPlaylist2(QString filename) {
-    qDebug()<<filename;
+    qDebug()<< "addToPlaylist2(" << filename << ")";
     QFileInfo fileInfo(filename);
     if (fileInfo.isFile()) {
         QUrl url = QUrl::fromLocalFile(fileInfo.absoluteFilePath());
@@ -101,6 +104,7 @@ void MainWindow::addToPlaylist2(QString filename) {
         }
     } else if (fileInfo.isDir()) {
         QStringList list = parseMediaFolder(filename);
+        qDebug() << "found : " << list.size();
 
         for (int i=0; i<list.size(); i++) {
             QString str = list.at(i);
