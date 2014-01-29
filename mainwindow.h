@@ -40,6 +40,8 @@ private:
 
     QStringList getMediaLocations();
     void setMediaLocations(QStringList list);
+    QList<int> getObdLayout();
+    void setObdLayout(QList<int> list);
 
 };
 

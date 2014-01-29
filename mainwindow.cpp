@@ -19,16 +19,31 @@ MainWindow::MainWindow(QWidget *parent) :
     loadPlaylist();
     ui->playerInfoWidget->setPlayerAndPlaylist(player, playlist);
 
-    QList<int> obdPages;
-    //for testing only. should add setting based config
-    obdPages << OBD2Widget::PID_COLLANT_TEMP << OBD2Widget::PID_TIMING_ADVANCE << OBD2Widget::PID_LONG_TERM_FUEL_TRIM << OBD2Widget::PID_SHORT_TERM_FUEL_TRIM << OBD2Widget::PID_MAF_AIRFLOW_RATE << OBD2Widget::PID_ENGINE_RPM;
-    obdPages << OBD2Widget::PID_ENGINE_LOAD << OBD2Widget::PID_FUEL_PRESURE << OBD2Widget::PID_VEHICLE_SPEED << OBD2Widget::PID_INTAKE_AIR_TEMP << OBD2Widget::PID_THROTTLE_POSITION << OBD2Widget::PID_RELATIVE_THROTTLE_POSITION;
-    obdPages << OBD2Widget::PID_AMBIENT_AIR_TEMP << OBD2Widget::PID_ENGINE_FUEL_RATE;
+    QList<int> obdPages = getObdLayout();
+    if (obdPages.size() == 0) {
+        //for testing only. should add setting based config
+        obdPages << OBD2Widget::PID_COLLANT_TEMP << OBD2Widget::PID_TIMING_ADVANCE << OBD2Widget::PID_LONG_TERM_FUEL_TRIM << OBD2Widget::PID_SHORT_TERM_FUEL_TRIM << OBD2Widget::PID_MAF_AIRFLOW_RATE << OBD2Widget::PID_ENGINE_RPM;
+        obdPages << OBD2Widget::PID_ENGINE_LOAD << OBD2Widget::PID_FUEL_PRESURE << OBD2Widget::PID_VEHICLE_SPEED << OBD2Widget::PID_INTAKE_AIR_TEMP << OBD2Widget::PID_THROTTLE_POSITION << OBD2Widget::PID_RELATIVE_THROTTLE_POSITION;
+        obdPages << OBD2Widget::PID_AMBIENT_AIR_TEMP << OBD2Widget::PID_ENGINE_FUEL_RATE;
+        setObdLayout(obdPages);
+    }
     ui->obd2Widget->setPages(obdPages);
 
     QString mainStyleSheet = readStylesheetFile("main");
     ui->centralWidget->setStyleSheet(mainStyleSheet);
     qApp->setStyleSheet(mainStyleSheet);
+
+    QString serialPortName = settings->value("obd2/serial_port/name", "N/A").toString();
+    int serialPortBuadrate = settings->value("obd2/serial_port/baudrate", -1).toInt();
+    if (serialPortName.compare("N/A") == 0) {
+        serialPortName = "";
+        settings->setValue("obd2/serial_port/name", "");
+    }
+    if (serialPortBuadrate == -1) {
+        serialPortBuadrate = 0;
+        settings->setValue("obd2/serial_port/baudrate", 0);
+    }
+    ui->obd2Widget->connectSerialPort(serialPortName, serialPortBuadrate);
 
 //    connect(this->, SIGNAL())
 }
@@ -176,6 +191,31 @@ void MainWindow::setMediaLocations(QStringList list) {
     for(int i=0; i<size; i++) {
         settings->setArrayIndex(i);
         settings->setValue("location", list.at(i));
+    }
+    settings->endArray();
+    settings->sync();
+}
+
+QList<int> MainWindow::getObdLayout() {
+    qDebug() << "getObdLayout()";
+    QList<int> list;
+    settings->sync();
+    int size = settings->beginReadArray("obd2/layout");
+    for(int i=0; i<size; i++) {
+        settings->setArrayIndex(i);
+        list.append(settings->value("pid").toInt());
+    }
+    settings->endArray();
+    return list;
+}
+
+void MainWindow::setObdLayout(QList<int> list) {
+    qDebug() << "setObdLayout()";
+    settings->beginWriteArray("obd2/layout");
+    int size = list.size();
+    for(int i=0; i<size; i++) {
+        settings->setArrayIndex(i);
+        settings->setValue("pid", list.at(i));
     }
     settings->endArray();
     settings->sync();
