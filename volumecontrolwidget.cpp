@@ -1,12 +1,14 @@
 #include "volumecontrolwidget.h"
 #include "ui_volumecontrolwidget.h"
 #include <QDebug>
+#include <QString>
+#include <QStringList>
 
 #if defined(Q_OS_MACX)
 #include <string>
 #include <iostream>
 #include <stdio.h>
-#elif defined(Q_OS_UNIX)
+#else//if defined(Q_OS_LINUX)
 #include <unistd.h>
 #include <fcntl.h>
 #ifdef OSSCONTROL
@@ -102,6 +104,7 @@ std::string exec(const char* cmd) {
     return result;
 }
 
+//#if defined(Q_OS_LINUX)
 #if defined(Q_OS_MACX)
 int VolumeControlWidget::getMasterVolume() {
     QString str = QString::fromStdString(exec("osascript -e \"output volume of (get volume settings)\""));
@@ -116,7 +119,7 @@ void VolumeControlWidget::setMasterVolume(int vol) {
     const char *c_str2 = str.toLocal8Bit().data();
     std::string s = exec(c_str2);
 }
-#elif defined(Q_OS_UNIX)
+#else //if defined(Q_OS_LINUX)
 
 int VolumeControlWidget::getMasterVolume() {
     bool ok;
@@ -124,9 +127,11 @@ int VolumeControlWidget::getMasterVolume() {
     QStringList mainList = str.split("\n");
     int limit = 0;
     int value = 0;
-    for (int i=0; i<mainList.size(); i++) {
-        QStringList lineList = mainList.at(i).split(": Playback ");
-        QString nameStr = lineList.at(0).replace(" ", "").toLower();
+    for (int i=0; i<mainList.size()-1; i++) {
+        QString lineStr = mainList.at(i);
+        QStringList lineList = lineStr.split(": Playback ");
+        QString nameStr = lineList.at(0);
+        nameStr = nameStr.replace(" ", "").toLower();
         QString valueStr = lineList.at(1);
         if (nameStr.compare("limits") == 0) {
             QStringList tmp = valueStr.split(" - ");
