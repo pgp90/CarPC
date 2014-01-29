@@ -6,7 +6,8 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    settings(new QSettings)
 {
     ui->setupUi(this);
 
@@ -50,7 +51,8 @@ QString MainWindow::readStylesheetFile(QString filename) {
 
 void MainWindow::loadPlaylist() {
     playlist->clear();
-    QStringList list;// = getMediaLocations();
+    QStringList list = getMediaLocations();
+    if (list.size() == 0) {
     QString tmpstr = QDir::homePath();
 #if defined(Q_OS_MACX)
     tmpstr.append("/Music/iTunes/iTunes Media/Music/Daft Punk");
@@ -58,6 +60,8 @@ void MainWindow::loadPlaylist() {
     tmpstr.append("/Music");
 #endif
     list << tmpstr;
+    setMediaLocations(list);
+    }
     for (int i=0; i<list.size(); i++) {
         addToPlaylist2(list.at(i));
     }
@@ -149,4 +153,30 @@ QStringList MainWindow::parseMediaFolder(QString filename) {
         }
     }
     return sl;
+}
+
+
+QStringList MainWindow::getMediaLocations() {
+    qDebug() << "getMediaLocations()";
+    QStringList list;
+    settings->sync();
+    int size = settings->beginReadArray("media/locations");
+    for(int i=0; i<size; i++) {
+        settings->setArrayIndex(i);
+        list.append(settings->value("location").toString());
+    }
+    settings->endArray();
+    return list;
+}
+
+void MainWindow::setMediaLocations(QStringList list) {
+    qDebug() << "setMediaLocations()";
+    settings->beginWriteArray("media/locations");
+    int size = list.size();
+    for(int i=0; i<size; i++) {
+        settings->setArrayIndex(i);
+        settings->setValue("location", list.at(i));
+    }
+    settings->endArray();
+    settings->sync();
 }

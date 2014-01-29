@@ -6,6 +6,7 @@
 #include <QMediaPlaylist>
 #include <QString>
 #include <QStringList>
+#include <QSettings>
 
 namespace Ui {
 class MainWindow;
@@ -25,6 +26,8 @@ private:
     QMediaPlayer *player;
     QMediaPlaylist *playlist;
 
+    QSettings *settings;
+
     QString readStylesheetFile(QString filename);
 
     void loadPlaylist();
@@ -34,6 +37,10 @@ private:
     QStringList parseMediaFolder(QString filename);
 
     void resizeEvent ( QResizeEvent * event );
+
+    QStringList getMediaLocations();
+    void setMediaLocations(QStringList list);
+
 };
 
 #endif // MAINWINDOW_H
